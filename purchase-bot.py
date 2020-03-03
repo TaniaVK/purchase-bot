@@ -116,24 +116,35 @@ def r_month(update, context):
         cursor = connection.cursor()
         # Print PostgreSQL Connection properties
         logger.debug( connection.get_dsn_parameters(),"\n")
-        m = datetime.date.today().month
-        y = datetime.date.today().year
+        today = datetime.date.today()
+        m = (today.month) - 1
+        m_now = today.month
+        y = today.year
         month_ago = '{}-{}-01'.format(y,m)
+        month_now = '{}-{}-01'.format(y,m_now)
+
+        # Get the date of prev month
+        first = today.replace(day=1)
+        lastMonth = first - datetime.timedelta(days=1)
+
         # Print PostgreSQL version
-        cursor.execute("""select p.purchase_amount, p.date_of_purchase, 
-                                t.type_of_spending from purchase p, types t 
-                                where p.purchase_id = t.id and date_of_purchase 
-                                >= '{}';""".format(month_ago))
+        cursor.execute("""select distinct t.type_of_spending, sum(p.purchase_amount) 
+                        from purchase p, 
+                        types t where p.purchase_id = t.id and 
+                        date_of_purchase >= '{}' and date_of_purchase < '{}' group by 
+                        t.type_of_spending;""".format(month_ago, month_now))
         connection.commit()
         record = cursor.fetchall()
         query = update.callback_query
         s = ""
         for r in record:
-            s = s + "{} : {} € : {}\n".format(r[1], r[0], r[2])
-        query.edit_message_text(text='This is your monthly 💶 report: \n {}'.format(s))
+            s = s + "{} : {} €\n".format(r[0], r[1])
+        query.edit_message_text(text='This is your {0:%B} report: \n {1}'.format(lastMonth,s))
 
-    except (Exception, psycopg2.Error) as error:
-        logger.error("Error while connecting to PostgreSQL: %s", error)
+    except (psycopg2.Error) as error:
+        logger.error("Error while db interaction: %s", error)
+    except (Exception) as error:
+        logger.error("Unexpected error: %s", error)
     finally:
         #closing database connection.
         if(connection):
