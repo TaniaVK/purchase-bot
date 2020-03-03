@@ -40,7 +40,6 @@ def add_purchase(price, desc = None, p_id = 6):
 
         cursor = connection.cursor()
         # Print PostgreSQL Connection properties
-        logger.debug(connection.get_dsn_parameters(),"\n")
 
         d = datetime.date.today()
         
@@ -73,8 +72,6 @@ def get_data_for_time(days):
                                     database = db_name)
 
         cursor = connection.cursor()
-        # Print PostgreSQL Connection properties
-        logger.debug(connection.get_dsn_parameters(),"\n")
 
         d = datetime.date.today()
         week_ago = d - datetime.timedelta(days=days)
@@ -114,8 +111,7 @@ def r_month(update, context):
                                     database = db_name)
 
         cursor = connection.cursor()
-        # Print PostgreSQL Connection properties
-        logger.debug( connection.get_dsn_parameters(),"\n")
+
         today = datetime.date.today()
         m = (today.month) - 1
         m_now = today.month
