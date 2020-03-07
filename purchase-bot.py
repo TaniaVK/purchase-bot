@@ -100,7 +100,7 @@ def r_week(update, context):
     s = ""
     for r in record:
         s = s + "{} : {} € : {}\n".format(r[1], r[0], r[2])
-    query.edit_message_text(text='This is your week 💶 report: \n {}'.format(s))
+    query.edit_message_text(text='This is your week 💶 report: \n{}'.format(s))
 
 def r_month(update, context):
     try:
@@ -135,7 +135,7 @@ def r_month(update, context):
         s = ""
         for r in record:
             s = s + "{} : {} €\n".format(r[0], r[1])
-        query.edit_message_text(text='This is your {0:%B} report: \n {1}'.format(lastMonth,s))
+        query.edit_message_text(text='This is your {0:%B} report: \n{1}'.format(lastMonth,s))
 
     except (psycopg2.Error) as error:
         logger.error("Error while db interaction: %s", error)
