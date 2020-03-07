@@ -113,16 +113,16 @@ def r_month(update, context):
         cursor = connection.cursor()
 
         today = datetime.date.today()
-        m = (today.month) - 1
+        
         m_now = today.month
         y = today.year
-        month_ago = '{}-{}-01'.format(y,m)
         month_now = '{}-{}-01'.format(y,m_now)
 
         # Get the date of prev month
         first = today.replace(day=1)
         lastMonth = first - datetime.timedelta(days=1)
-
+        m = lastMonth.month
+        month_ago = '{}-{}-01'.format(y,m)
         # Print PostgreSQL version
         cursor.execute("""select distinct t.type_of_spending, sum(p.purchase_amount) 
                         from purchase p, 
