@@ -131,10 +131,18 @@ def r_month(update, context):
                         t.type_of_spending;""".format(month_ago, month_now))
         connection.commit()
         record = cursor.fetchall()
+
+        cursor.execute("""select sum(purchase_amount) from purchase where  
+                        date_of_purchase >= '{}' and date_of_purchase < '{}';""".format(month_ago, month_now))
+        connection.commit()
+        sum = cursor.fetchone()
+
         query = update.callback_query
         s = ""
         for r in record:
             s = s + "{} : {} €\n".format(r[0], r[1])
+        s = s + "=================\n"
+        s = s + "Total: {} €".format(sum[0])
         query.edit_message_text(text='This is your {0:%B} report: \n{1}'.format(lastMonth,s))
 
     except (psycopg2.Error) as error:
